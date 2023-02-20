@@ -46,7 +46,7 @@ jobs:
               id: docker_meta
               uses: docker/metadata-action@v4
               with:
-                  images: ${{ github.repository }}
+                  images: ghcr.io/${{ github.repository }}
                   labels: |
                       io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.repository.default_branch }}/README.md
                   flavor: |
