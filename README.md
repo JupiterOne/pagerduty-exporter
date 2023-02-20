@@ -44,6 +44,13 @@ Application Options:
       --pagerduty.summary.since=                                        Timeframe which data should be fetched for summary
                                                                         metrics (time.Duration) (default: 730h)
                                                                         [$PAGERDUTY_SUMMARY_SINCE]
+      --pagerduty.notification.since=                                   Timeframe which data should be fetched for notifications
+                                                                        metrics (time.Duration) (default: 730h)
+                                                                        [$PAGERDUTY_NOTIFICATION_SINCE]
+      --pagerduty.notification.limit=                                   PagerDuty notification limit count (default: 5000)
+                                                                        [$PAGERDUTY_NOTIFICATION_LIMIT]
+      --pagerduty.notification.timeformat=                              PagerDuty notification time format (label) (default: Mon, 02
+                                                                        Jan 15:04 MST) [$PAGERDUTY_NOTIFICATION_TIMEFORMAT]
       --server.bind=                                                    Server address (default: :8080) [$SERVER_BIND]
       --server.timeout.read=                                            Server read timeout (default: 5s) [$SERVER_TIMEOUT_READ]
       --server.timeout.write=                                           Server write timeout (default: 10s)
@@ -64,6 +71,9 @@ Application Options:
                                                                         (default: 15m) [$SCRAPE_TIME_SUMMARY]
       --scrape.time.live=                                               Scrape time incidents and oncalls (time.duration)
                                                                         (default: 1m) [$SCRAPE_TIME_LIVE]
+      --scrape.time.notification=                                       Scrape time notifications (time.duration)
+                                                                        (default: 1m) [$SCRAPE_TIME_NOTIFICATIONS]
+
 
 Help Options:
   -h, --help                                                            Show this help message
@@ -84,10 +94,10 @@ You can get the exporter via the following command:
 go get github.com/webdevops/pagerduty-exporter
 ```
 
-From here on you will be able to run the exporter as described  [configuration](#Configuration) section.
-
+From here on you will be able to run the exporter as described [configuration](#Configuration) section.
 
 ### Container
+
 A containerized version is available via `docker pull webdevops/pagerduty-exporter`
 Alternatively you can build the image yourself locally:
 
@@ -97,17 +107,17 @@ docker build -t webdevops/pagerduty-exporter:latest .
 ```
 
 You are now able to run you exporter locally in a container with the following command:
+
 ```
 docker run --rm -ti -p 8080:8080 webdevops/pagerduty-exporter:latest --pagerduty.authtoken=YourGeneratedToken
 ```
 
 This will run the container locally, mapping container port 8080 to local port 8080, allowing you to scrape the exporter on `127.0.0.1:8080/metrics`
 
-
 ## Metrics
 
 | Metric                                          | Scraper            | Description                                                                                                          |
-|-------------------------------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
+| ----------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | `pagerduty_stats`                               | Collector          | Collector stats                                                                                                      |
 | `pagerduty_api_counter`                         | Collector          | PagerDuty api call counter                                                                                           |
 | `pagerduty_team_info`                           | Team               | Team informations                                                                                                    |
@@ -129,16 +139,17 @@ This will run the container locally, mapping container port 8080 to local port 8
 | `pagerduty_summary_incident_resolve_duration`   | Summary            | Histogram (buckets) for resolve duration splitted by service, urgency and priority                                   |
 | `pagerduty_summary_incident_statuschange_count` | Summary            | Counter for new or changed status (eg triggered -> acknowledged) incidents splitted by service, urgency and priority |
 
-Prometheus queries
-------------------
+## Prometheus queries
 
 Current oncall person
+
 ```
 pagerduty_schedule_oncall{scheduleID="$SCHEDULEID",type="startTime"}
 * on (userID) group_left(userName) (pagerduty_user_info)
 ```
 
 Next shift
+
 ```
 bottomk(1,
   min by (userName, time) (

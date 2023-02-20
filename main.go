@@ -281,6 +281,17 @@ func initMetricCollector() {
 	} else {
 		log.WithField("collector", collectorName).Infof("collector disabled")
 	}
+
+	collectorName = "Notifications"
+	if opts.ScrapeTime.Notification.Seconds() > 0 {
+		c := collector.New(collectorName, &MetricsCollectorNotifications{}, log.StandardLogger())
+		c.SetScapeTime(*opts.ScrapeTime.Notification)
+		if err := c.Start(); err != nil {
+			log.Panic(err.Error())
+		}
+	} else {
+		log.WithField("collector", collectorName).Infof("collector disabled")
+	}
 }
 
 // start and handle prometheus handler

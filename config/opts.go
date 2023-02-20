@@ -42,6 +42,12 @@ type (
 			Summary struct {
 				Since time.Duration `long:"pagerduty.summary.since"     env:"PAGERDUTY_SUMMARY_SINCE"        description:"Timeframe which data should be fetched for summary metrics (time.Duration)" default:"730h"`
 			}
+
+			Notification struct {
+				Since      time.Duration `long:"pagerduty.notification.since" env:"PAGERDUTY_NOTIFICATION_SINCE" description:"Timeframe which data should be fetched for notification metrics (time.Duration)" default:"730h"`
+				TimeFormat string        `long:"pagerduty.notification.timeformat" env:"PAGERDUTY_NOTIFICATION_TIMEFORMAT" description:"PagerDuty notification time format (label)" default:"Mon, 02 Jan 15:04 MST"`
+				Limit      uint          `long:"pagerduty.notification.limit" env:"PAGERDUTY_NOTIFICATION_LIMIT"      description:"PagerDuty notification limit count" default:"5000"`
+			}
 		}
 
 		// general options
@@ -60,6 +66,7 @@ type (
 			User              *time.Duration `long:"scrape.time.user"  env:"SCRAPE_TIME_USER"    description:"Scrape time for user metrics (time.duration; default is SCRAPE_TIME)"`
 			Summary           time.Duration  `long:"scrape.time.summary"  env:"SCRAPE_TIME_SUMMARY"    description:"Scrape time for general summary metrics (time.duration)"  default:"15m"`
 			Live              time.Duration  `long:"scrape.time.live"     env:"SCRAPE_TIME_LIVE"       description:"Scrape time incidents and oncalls (time.duration)"        default:"1m"`
+			Notification      *time.Duration `long:"scrape.time.notification" env:"SCRAPE_TIME_NOTIFICATION" description:"Scrape time notifications (time.duration)" default:"15m"`
 		}
 	}
 )
